@@ -1,41 +1,53 @@
 class MyCircularQueue {
-    ArrayList<Integer> list;
-    int capacity;
+
+    int data[];
+    int size ;
+    int front ;
+    int rear;
+
     public MyCircularQueue(int k) {
-        list = new ArrayList<>();
-        capacity=k;
+        data = new int[k];
+        size = k;
+        front = rear = -1;
     }
     
     public boolean enQueue(int value) {
-        if(isFull()){
-            return false;
-        }
-        list.add(value);
+        if(isFull()) return false;
+        
+        if(rear == -1) front = rear = 0;
+        else rear = ((rear + 1) % size);
+        data[rear] = value;
         return true;
     }
     
     public boolean deQueue() {
-        if(isEmpty()){
-            return false;
-        }
-        list.remove(0);
+        if(isEmpty()) return false;
+
+        if(rear == front) front = rear = -1;
+        else front = (front + 1 ) % size;
         return true;
     }
     
     public int Front() {
-        return list.isEmpty()?-1:list.get(0);
+        if(isEmpty()) return -1;
+
+        int val = data[front];
+        return val;
     }
     
     public int Rear() {
-        return list.isEmpty() ? -1: list.get(list.size()-1);
+        if(isEmpty()) return -1;
+
+        int val = data[rear];
+        return val;
     }
     
     public boolean isEmpty() {
-        return list.isEmpty();
+        return (front == -1);
     }
     
     public boolean isFull() {
-        return list.size() == capacity;
+        return ((rear + 1) % size == front);
     }
 }
 
