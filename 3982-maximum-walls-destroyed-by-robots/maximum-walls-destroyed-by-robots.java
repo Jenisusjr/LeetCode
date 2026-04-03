@@ -14,44 +14,56 @@ class Solution {
         Arrays.sort(robots);
         Arrays.sort(walls);
 
-        for (int i = 0; i < n; i++) {
-            int pos1 = upperBound(walls, robots[i]);
+        int m = walls.length;
+        int rightPtr = 0;
+        int leftPtr = 0;
+        int curPtr = 0;
+        int robotPtr = 0;
 
-            int leftPos = 0;
+        for (int i = 0; i < n; i++) {
+            while (rightPtr < m && walls[rightPtr] <= robots[i]) {
+                rightPtr++;
+            }
+            int pos1 = rightPtr;
+
+            while (curPtr < m && walls[curPtr] < robots[i]) {
+                curPtr++;
+            }
+            int pos2 = curPtr;
+
+            int leftBound = robots[i] - robotsToDistance.get(robots[i]);
             if (i >= 1) {
-                int leftBound = Math.max(
+                leftBound = Math.max(
                     robots[i] - robotsToDistance.get(robots[i]),
                     robots[i - 1] + 1
                 );
-                leftPos = lowerBound(walls, leftBound);
-            } else {
-                leftPos = lowerBound(
-                    walls,
-                    robots[i] - robotsToDistance.get(robots[i])
-                );
             }
+            while (leftPtr < m && walls[leftPtr] < leftBound) {
+                leftPtr++;
+            }
+            int leftPos = leftPtr;
             left[i] = pos1 - leftPos;
 
-            int rightPos = 0;
+            int rightBound = robots[i] + robotsToDistance.get(robots[i]);
             if (i < n - 1) {
-                int rightBound = Math.min(
+                rightBound = Math.min(
                     robots[i] + robotsToDistance.get(robots[i]),
                     robots[i + 1] - 1
                 );
-                rightPos = upperBound(walls, rightBound);
-            } else {
-                rightPos = upperBound(
-                    walls,
-                    robots[i] + robotsToDistance.get(robots[i])
-                );
             }
-            int pos2 = lowerBound(walls, robots[i]);
+            while (rightPtr < m && walls[rightPtr] <= rightBound) {
+                rightPtr++;
+            }
+            int rightPos = rightPtr;
             right[i] = rightPos - pos2;
 
             if (i == 0) {
                 continue;
             }
-            int pos3 = lowerBound(walls, robots[i - 1]);
+            while (robotPtr < m && walls[robotPtr] < robots[i - 1]) {
+                robotPtr++;
+            }
+            int pos3 = robotPtr;
             num[i] = pos1 - pos3;
         }
 
@@ -73,33 +85,5 @@ class Solution {
         }
 
         return Math.max(subLeft, subRight);
-    }
-
-    private int lowerBound(int[] arr, int target) {
-        int left = 0;
-        int right = arr.length;
-        while (left < right) {
-            int mid = left + (right - left) / 2;
-            if (arr[mid] < target) {
-                left = mid + 1;
-            } else {
-                right = mid;
-            }
-        }
-        return left;
-    }
-
-    private int upperBound(int[] arr, int target) {
-        int left = 0;
-        int right = arr.length;
-        while (left < right) {
-            int mid = left + (right - left) / 2;
-            if (arr[mid] <= target) {
-                left = mid + 1;
-            } else {
-                right = mid;
-            }
-        }
-        return left;
     }
 }
